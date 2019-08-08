@@ -1,6 +1,7 @@
 import sys
 import pygame
 from bullet import Bullet
+from alien import Alien
 
 '''  This module has game functions of Alien Invasion '''
 def check_keydown_events(event, ai_settings, screen, ship, bullets):
@@ -12,12 +13,16 @@ def check_keydown_events(event, ai_settings, screen, ship, bullets):
         # Move the ship to the right
         ship.moving_left = True
     elif event.key == pygame.K_SPACE:
-        # Create a new bullet and add it to the group
-        if len(bullets) < ai_settings.bullet_allowed:
-            new_bullet = Bullet(ai_settings, screen, ship)
-            bullets.add(new_bullet)
+        fire_bullets(ai_settings, screen, ship, bullets)
     elif event.key == pygame.K_q:
         sys.exit()
+
+def fire_bullets(ai_settings, screen, ship, bullets):
+    ''' Create a bullet if limit is not reached yet '''
+    # Create a new bullet and add it to the group
+    if len(bullets) < ai_settings.bullet_allowed:
+        new_bullet = Bullet(ai_settings, screen, ship)
+        bullets.add(new_bullet)
 
 def check_keyup_events(event, ship):
     ''' Respond to key releases '''
@@ -46,7 +51,7 @@ def update_bullets(bullets):
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
 
-def update_screen(ai_settings, screen, ship, bullets):
+def update_screen(ai_settings, screen, ship, alien, bullets):
     ''' Update images on the screen and flip them to the new screen '''
     # Redraw the screen each pass trough the loop
     screen.fill(ai_settings.bg_color)
@@ -57,6 +62,11 @@ def update_screen(ai_settings, screen, ship, bullets):
 
     # Draw the ship
     ship.blitme()
+    aliens.draw(screen)
 
     # Make the most recently drawn screen visible.
     pygame.display.flip()
+
+def create_fleet(ai_settings, screen, aliens):
+    ''' Create a full fleet of aliens '''
+    
